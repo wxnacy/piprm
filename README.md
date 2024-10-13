@@ -1,2 +1,2 @@
 # piprm
-piprm - pip repository manager
+piprm - pip registry manager

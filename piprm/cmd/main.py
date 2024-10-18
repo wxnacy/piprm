@@ -4,8 +4,8 @@
 # Description:
 
 import typer
-from rich.console import Console
-from rich import print
+from typer import Option
+from typing import Optional
 from piprm import (
     get_registry,
     get_registrys,
@@ -14,7 +14,6 @@ from piprm import (
     test_latency,
 )
 
-console = Console()
 
 app = typer.Typer()
 
@@ -41,10 +40,18 @@ def use(name: str):
 
 
 @app.command()
-def test(name: str):
-    r = get_registry(name)
-    t = test_latency(r.index_url)
-    print(f"{name} ------ {t} ms")
+def test(
+    name: Optional[str] = Option(None, help='Registry name')
+):
+    if name:
+        r = get_registry(name)
+        t = test_latency(r.index_url)
+        print(f"{name} ------ {t} ms")
+    else:
+        registrys = get_registrys()
+        for r in registrys:
+            t = test_latency(r.index_url)
+            print(f"{r.name} ------ {t} ms")
 
 
 @app.command()

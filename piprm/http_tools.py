@@ -14,5 +14,5 @@ def test_latency(url):
     end_time = time.time()
     latency = end_time - start_time
     latency = int(latency * 1000)
-    print(f"Latency for {url}: {latency} ms")
+    #  print(f"Latency for {url}: {latency} ms")
     return latency

@@ -55,11 +55,8 @@ def test(
 
 
 @app.command()
-def goodbye(name: str, formal: bool = False):
-    if formal:
-        print(f"Goodbye Ms. {name}. Have a good day.")
-    else:
-        print(f"Bye {name}!")
+def version():
+    print('prm 0.2.0')
 
 
 if __name__ == "__main__":

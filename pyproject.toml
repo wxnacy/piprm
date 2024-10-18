@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "piprm"
-version = "0.1.1"
+version = "0.2.0"
 description = "pip registry manager"
 authors = ["wxnacy <wxnacy@gmail.com>"]
 license = "MIT License"

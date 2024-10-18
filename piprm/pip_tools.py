@@ -2,13 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author:
 # Description:
-from configparser import ConfigParser
 import subprocess
 from typing import Optional
-from pydantic import (
-    BaseModel,
-    Field,
-)
 
 
 PIP_CONF_CMD_PREFIXS = ['python', '-m', 'pip', 'config']
@@ -16,28 +11,28 @@ GLOBAL_TRUSTED_HOST = 'global.trusted-host'
 GLOBAL_INDEX_URL = 'global.index-url'
 
 
-class SubConfig(BaseModel):
-    index_url: Optional[str] = Field(None, alias='index-url')
-    trusted_host: Optional[str] = Field(None, alias='trusted-host')
+class SubConfig():
+    index_url: Optional[str]
+    trusted_host: Optional[str]
 
 
-class PipConfig(BaseModel):
-    global_: Optional[SubConfig] = Field(None, alias='global')
+class PipConfig():
+    global_: Optional[SubConfig]
 
 
-class ConfigPath(BaseModel):
-    path: Optional[str] = Field(None)
-    exists: bool = Field(False)
+class ConfigPath():
+    path: Optional[str]
+    exists: bool
 
 
-class PipPath(BaseModel):
-    global_: Optional[ConfigPath] = Field(None, alias='global')
-    site: Optional[ConfigPath] = Field(None)
-    user: Optional[ConfigPath] = Field(None)
+class PipPath():
+    global_: Optional[ConfigPath]
+    site: Optional[ConfigPath]
+    user: Optional[ConfigPath]
 
 
 def cmd_output(cmds: list) -> str:
-    return subprocess.check_output(cmds).decode()
+    return subprocess.check_output(cmds).decode().strip('\n')
 
 
 def pip_config_set(name: str, value: str) -> bool:
@@ -104,16 +99,12 @@ def get_pip_config_path(debug_text: Optional[str] = None) -> PipPath:
 
 
 def get_user_config() -> Optional[PipConfig]:
-    conf = get_pip_config_path().user
-    if not conf.exists:
-        return None
+    g_conf = SubConfig()
 
-    parser = ConfigParser()
-    parser.read(conf.path)
-
+    g_conf.trusted_host = pip_config_get(GLOBAL_TRUSTED_HOST)
+    g_conf.index_url = pip_config_get(GLOBAL_INDEX_URL)
     item = PipConfig()
-    if 'global' in parser:
-        item.global_ = SubConfig(**parser['global'])
+    item.global_ = g_conf
     return item
 
 
@@ -125,20 +116,3 @@ def pip_config_set_registry(
         pip_config_set(GLOBAL_INDEX_URL, index_url) and
         pip_config_set(GLOBAL_TRUSTED_HOST, trusted_host)
     )
-
-
-if __name__ == "__main__":
-    pip_config_list()
-    #  print(pip_config)
-
-    config = ConfigParser()
-    config.read('/Users/wxnacy/.config/pip/pip.conf')
-    print(dict(config))
-    c = config['global']
-    print(c)
-    print(dict(c))
-
-    p = get_pip_config_path()
-    print(p)
-
-    print(get_user_config())

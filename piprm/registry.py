@@ -5,8 +5,6 @@
 
 from typing import List, Optional
 from urllib.parse import urlparse
-from .exceptions import PipConfigException
-from .pip_tools import pip_config_set_registry, get_user_config
 
 
 class Registry:
@@ -28,6 +26,7 @@ REGISTRYS = [
 ]
 
 REGISTRY_MAP = {o.name: o for o in REGISTRYS}
+REGISTRY_URL_MAP = {o.index_url: o for o in REGISTRYS}
 
 
 def get_registrys() -> List[Registry]:
@@ -39,22 +38,5 @@ def get_registry(name: str) -> Optional[Registry]:
     return REGISTRY_MAP.get(name)
 
 
-def set_registry(name: str):
-    r = get_registry(name)
-    if not r:
-        raise PipConfigException(f"registry: {name} not found")
-    if not pip_config_set_registry(r.index_url, r.host):
-        raise PipConfigException("set registry failed")
-
-
-def get_use_registry() -> Optional[Registry]:
-    config = get_user_config()
-    if not config:
-        return None
-    if not config.global_:
-        return None
-
-    for r in REGISTRYS:
-        if r.host == config.global_.trusted_host:
-            return r
-    return None
+def get_registry_by_url(url: str) -> Optional[Registry]:
+    return REGISTRY_URL_MAP.get(url)

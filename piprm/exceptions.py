@@ -5,3 +5,7 @@
 
 class PipConfigException(Exception):
     ...
+
+
+class RegistryException(Exception):
+    ...

@@ -4,24 +4,28 @@
 # Description:
 
 import typer
-from typer import Option
+from typer import Option, Argument
 from typing import Optional
 from piprm import (
     get_registry,
     get_registrys,
-    set_registry,
-    get_use_registry,
     test_latency,
+    get_manager,
 )
 
 
 app = typer.Typer()
 
+OPTION_MANAGER = Option('pip', '-m', '--manager', help='管理器')
+
 
 @app.command()
-def ls():
+def ls(
+    manager_name: str = OPTION_MANAGER,
+):
     registrys = get_registrys()
-    use_registry = get_use_registry()
+    m = get_manager(manager_name)
+    use_registry = m.get_use_registry()
     is_use = False
     for r in registrys:
         name = f"{r.name} "
@@ -33,8 +37,12 @@ def ls():
 
 
 @app.command()
-def use(name: str):
-    set_registry(name)
+def use(
+    name: str = Argument(help='registry name'),
+    manager_name: str = OPTION_MANAGER,
+):
+    m = get_manager(manager_name)
+    m.set_registry(name)
     msg = f"The registry has been changed to '{name}'."
     print(msg)
 
@@ -56,7 +64,7 @@ def test(
 
 @app.command()
 def version():
-    print('prm 0.2.0')
+    print('prm 0.3.0')
 
 
 if __name__ == "__main__":

@@ -5,18 +5,18 @@
 from .registry import (
     get_registry,
     get_registrys,
-    set_registry,
-    get_use_registry,
 )
 from .http_tools import (
     test_latency
+)
+from .manager import (
+    get_manager,
 )
 
 
 __all__ = [
     'get_registry',
     'get_registrys',
-    'set_registry',
-    'get_use_registry',
     'test_latency',
+    'get_manager',
 ]
